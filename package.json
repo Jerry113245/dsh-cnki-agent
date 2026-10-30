@@ -1,0 +1,58 @@
+{
+  "name": "dsh-cnki-agent",
+  "version": "0.3.0",
+  "description": "CNKIAgent：知网论文检索—精读—评估—写作一体化插件。通过 dsh-browser-cdp 驱动本地 Edge 打开真实知网逐词检索，配合核心期刊编辑视角精读、研究版图与选题、分步写作、引用审计与 Word 排版，并带右侧栏文献库面板。",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./cordis.patch.yml": "./cordis.patch.yml",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib",
+    "skills",
+    "locale",
+    "scripts",
+    "cordis.patch.yml",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jerry113245/dsh-cnki-agent.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Jerry113245/dsh-cnki-agent/issues"
+  },
+  "homepage": "https://github.com/Jerry113245/dsh-cnki-agent#readme",
+  "scripts": {
+    "check": "node scripts/check-imports.mjs && node --check lib/index.js && node --check lib/client.js"
+  },
+  "engines": {
+    "dsh": ">=0.2.0-rc.2 <0.3.0-0"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "platform": "web",
+      "immediately": true,
+      "inject": [
+        "@deepseek-ai/dsh-client-connection"
+      ]
+    }
+  },
+  "keywords": [
+    "dsh-plugin",
+    "cnki",
+    "知网",
+    "academic",
+    "literature-search",
+    "paper-writing"
+  ]
+}

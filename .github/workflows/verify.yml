@@ -1,0 +1,42 @@
+name: Verify plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Validate manifest
+        run: |
+          node -e "
+          const fs = require('node:fs');
+          const p = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+          if (!p.dsh || !p.dsh.bundle) throw new Error('missing dsh.bundle');
+          if (!fs.existsSync(p.main)) throw new Error('missing main: ' + p.main);
+          for (const f of p.files) {
+            if (!fs.existsSync(f)) throw new Error('files entry missing: ' + f);
+          }
+          console.log('manifest ok', p.name, p.version);
+          "
+
+      - name: Syntax check
+        run: node --check lib/index.js && node --check lib/client.js
+
+      - name: No foreign runtime imports
+        run: node scripts/check-imports.mjs
