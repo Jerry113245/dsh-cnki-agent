@@ -1,0 +1,37 @@
+name: Verify plugin
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Validate manifest
+        run: node -e "const p=require('./package.json');if(!p.dsh||!p.dsh.bundle)throw new Error('dsh.bundle missing');console.log('ok',p.name,p.version)"
+      - name: Syntax check
+        run: |
+          node --check lib/index.js
+          node --check lib/client.js
+      - name: No foreign runtime imports
+        run: node scripts/check-imports.mjs
+      - name: Python tool syntax
+        run: python3 -c "import ast;ast.parse(open('assets/tools/format_docx.py',encoding='utf-8').read());print('format_docx.py ok')"
+      - name: Docx tool smoke test
+        run: |
+          python3 -m pip install --quiet python-docx
+          printf '# 第一章 绪论\n\n正文段落。\n\n| 变量 | 均值 |\n|---|---|\n| 甲 | 1.0 |\n' > /tmp/t.md
+          python3 assets/tools/format_docx.py build /tmp/t.md /tmp/t.docx --title 测试
+          python3 assets/tools/format_docx.py check /tmp/t.docx
