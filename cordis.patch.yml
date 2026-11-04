@@ -1,0 +1,13 @@
+# CNKIAgent bundle patch
+#
+# 只挂一行：包入口 lib/index.js（宿主半侧 Cordis 插件）。
+# 插件在 apply 中完成三件事：
+#   1) 注册综合技能 cnki-agent（技能目录里同时带 SKILL.md，离线也读得到）；
+#   2) 注册工具 cnki_search / cnki_reading_plan / cnki_research_map；
+#   3) 把知网检索能力的上下文段注入 agent 提示词，要求"自动拆关键词 + 逐个检索"。
+#
+# 运行时依赖（cordis / dsh-*）由 DSH 安装本体提供，本包不声明 dependencies。
+
+- insert:
+    - id: dsh-cnki-agent
+      name: 'dsh-cnki-agent'
