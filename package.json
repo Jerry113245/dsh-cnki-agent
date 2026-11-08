@@ -1,6 +1,6 @@
 {
   "name": "dsh-cnki-agent",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "CNKIAgent：知网论文检索—精读—评估—写作—去 AIGC 一体化插件。通过 dsh-browser-cdp 驱动本地 Edge 打开真实知网逐词检索，配合核心期刊编辑视角精读、研究版图与选题、分步写作、去 AI 味与语体配平、引用审计、Word 排版（题注/交叉引用/公式编号/三线表/GB/T 7714）、论文插图（架构图/流程图原生矢量）与英文 academic-humanizer 改写（含 NSF/NIH 申请书），并带右侧栏文献库面板。",
   "type": "module",
   "main": "lib/index.js",

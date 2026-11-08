@@ -10,8 +10,10 @@
 const token = process.env.GITHUB_TOKEN || process.env.GH_TOKEN;
 const repoArg = process.argv[2];
 const dry = process.argv.includes('--dry');
+const onlyArg = process.argv.find((a) => a.startsWith('--only='));
+const only = onlyArg ? onlyArg.slice('--only='.length) : null;
 if (!token || !repoArg) {
-  console.error('用法: GITHUB_TOKEN=xxx node scripts/backfill-releases.mjs <owner>/<repo> [--dry]');
+  console.error('用法: GITHUB_TOKEN=xxx node scripts/backfill-releases.mjs <owner>/<repo> [--dry] [--only=0.8.0]');
   process.exit(1);
 }
 
@@ -21,7 +23,12 @@ const TARGETS = [
   { version: '0.5.0', sha: 'ed91deb' },
   { version: '0.6.0', sha: 'a753b1f' },
   { version: '0.7.0', sha: '42a602b' },
-];
+].filter((t) => !only || t.version === only);
+
+if (TARGETS.length === 0) {
+  console.error(`没有匹配的版本：${only}`);
+  process.exit(1);
+}
 
 const H = {
   authorization: `Bearer ${token}`,
