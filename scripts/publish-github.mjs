@@ -106,11 +106,21 @@ for (const file of files) {
 // 2) 建 tree（空仓库不能带 base_tree）
 const treeResult = await gh('POST', `/repos/${owner}/${repo}/git/trees`, { tree });
 
-// 3) 建 commit（空仓库没有 parent）
+// 3) 建 commit：把当前 main 作为 parent，保持线性历史。
+//    之前这里写死 parents: []，导致每次发布都是孤儿提交，默认分支上永远只剩
+//    最新一个 commit，旧版本只能靠 SHA 补打 tag 才能找回来。
+let parentSha = null;
+try {
+  const currentRef = await gh('GET', `/repos/${owner}/${repo}/git/ref/heads/main`);
+  parentSha = currentRef?.object?.sha ?? null;
+} catch {
+  parentSha = null; // 空仓库或分支不存在
+}
+
 const commit = await gh('POST', `/repos/${owner}/${repo}/git/commits`, {
   message: commitMessage,
   tree: treeResult.sha,
-  parents: [],
+  parents: parentSha ? [parentSha] : [],
 });
 
 // 4) 建/更新分支引用
