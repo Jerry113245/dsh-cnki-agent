@@ -23,6 +23,7 @@ const TARGETS = [
   { version: '0.5.0', sha: 'ed91deb' },
   { version: '0.6.0', sha: 'a753b1f' },
   { version: '0.7.0', sha: '42a602b' },
+  { version: '0.8.0', sha: '6b1d590' },
 ].filter((t) => !only || t.version === only);
 
 if (TARGETS.length === 0) {
